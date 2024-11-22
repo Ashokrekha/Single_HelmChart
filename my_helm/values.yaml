@@ -1,0 +1,99 @@
+microservices:
+  microservice1:
+    replicaCount: 1
+    image:
+      repository: deekshithsn/ui
+      pullPolicy: IfNotPresent
+      tag: " "
+    service:
+      type: NodePort
+      port: 8080
+      name: ui-web-app
+      targetport: 8080
+      nodeport: 30001
+    container:
+      name: react-ui
+
+  microservice2:
+    replicaCount: 1
+    image:
+      repository: deekshithsn/zuul
+      pullPolicy: IfNotPresent
+      tag: " "
+    service:
+      type: NodePort
+      port: 9999
+      name: zuul-api-gateway
+      targetport: 9999
+      nodeport: 32470
+    container:
+      name: zuul-api-gateway
+    affinity:
+      podAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - react-ui
+              topologyKey: "kubernetes.io/hostname"
+
+  microservice3:
+    replicaCount: 1
+    image:
+      repository: deekshithsn/shoe
+      pullPolicy: IfNotPresent
+      tag: " "
+    service:
+      type: ClusterIP
+      port: 1002
+      targetport: 1002
+      name: shoe
+    container:
+      name: shoe-ui
+
+  microservice4:
+    replicaCount: 1
+    image:
+      repository: deekshithsn/offer
+      pullPolicy: IfNotPresent
+      tag: " "
+    service:
+      type: ClusterIP
+      port: 1001
+      targetport: 1001
+      name: offer
+    container:
+      name: offer-ui
+
+  microservice5:
+    replicaCount: 1
+    image:
+      repository: deekshithsn/cart
+      pullPolicy: IfNotPresent
+      tag: " "
+    service:
+      type: ClusterIP
+      port: 1004
+      targetport: 1004
+      name: cart
+    container:
+      name: cart-ui
+
+  microservice6:
+    replicaCount: 1
+    image:
+      repository: deekshithsn/wishlist
+      pullPolicy: IfNotPresent
+      tag: " "
+    service:
+      type: ClusterIP
+      port: 1003
+      targetport: 5000
+      name: wishlist
+    container:
+      name: wishlist
+

@@ -1,0 +1,21 @@
+{{- range $key, $service := .Values.microservices }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $service.service.name }}
+  labels:
+    app: {{ $key }}
+spec:
+  type: {{ $service.service.type }}
+  selector:
+    app: {{ $key }}
+  ports:
+    - protocol: TCP
+      port: {{ $service.service.port }}
+      targetPort: {{ $service.service.targetport }}
+      {{- if eq $service.service.type "NodePort" }}
+      nodePort: {{ $service.service.nodeport }}
+      {{- end }}
+---
+{{- end }}
+

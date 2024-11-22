@@ -1,0 +1,6 @@
+apiVersion: v2
+name: my_helm
+description: A Helm chart for deploying all microservices
+version: 0.1.0
+appVersion: "1.16.0"
+

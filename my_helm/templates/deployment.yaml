@@ -1,0 +1,37 @@
+{{- range $key, $service := .Values.microservices }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $service.service.name }}
+  labels:
+    app: {{ $key }}
+spec:
+  replicas: {{ $service.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ $key }}
+  template:
+    metadata:
+      labels:
+        app: {{ $key }}
+    spec:
+      containers:
+        - name: {{ $service.container.name | default $key }}
+          image: {{ $service.image.repository | quote }}
+          imagePullPolicy: "{{ $service.image.pullPolicy }}"  # Quoted to ensure correct parsing
+          ports:
+            - containerPort: {{ $service.service.targetport }}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+      {{- if $service.affinity }}
+      affinity:
+        {{ toYaml $service.affinity | nindent 8 }}
+      {{- end }}
+---
+{{- end }}
+
